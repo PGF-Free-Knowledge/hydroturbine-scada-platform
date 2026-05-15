@@ -1,3 +1,4 @@
+[Versión en Español](README_ES.md)
 # HydroTurbine-SCADA Platform
 
 ## Industrial Monitoring and Control Platform for Pelton and Francis Turbines
