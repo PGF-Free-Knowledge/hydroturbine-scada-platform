@@ -37,15 +37,31 @@ def dashboard():
 
     df = read_data()
 
-    latest = df.iloc[-1]
+    # SHOW ONLY LAST 50 SAMPLES
 
+    df = df.tail(50)
+
+    latest = df.iloc[-1]
+ 
     fig = make_subplots(
-        rows=2,
+
+        rows=4,
         cols=2,
+
         specs=[
+
             [{"type": "indicator"}, {"type": "indicator"}],
-            [{"type": "indicator"}, {"type": "indicator"}]
-        ]
+
+            [{"type": "indicator"}, {"type": "indicator"}],
+
+            [{"type": "xy", "colspan": 2}, None],
+
+            [{"type": "xy", "colspan": 2}, None]
+
+        ],
+
+        vertical_spacing=0.12
+
     )
 
     # RPM
@@ -104,11 +120,57 @@ def dashboard():
         col=2
     )
 
+# ---------------------------------------------------
+# HISTORICAL TRENDS
+# ---------------------------------------------------
+
+    timestamps = df["timestamp"]
+
+# RPM TREND
+
+    fig.add_trace(
+
+        go.Scatter(
+
+            x=timestamps,
+            y=df["rpm"],
+
+            mode="lines",
+
+            name="RPM Trend"
+
+        ),
+
+        row=3,
+        col=1
+
+    )
+
+# POWER TREND
+
+    fig.add_trace(
+
+        go.Scatter(
+
+            x=timestamps,
+            y=df["power"],
+
+            mode="lines",
+
+            name="Power Trend"
+
+        ),
+
+        row=4,
+        col=1
+
+    )
+
     fig.update_layout(
 
         template="plotly_dark",
 
-        height=800,
+        height=1200,
 
         title="HydroTurbine-SCADA | Pelton Industrial Dashboard"
 
