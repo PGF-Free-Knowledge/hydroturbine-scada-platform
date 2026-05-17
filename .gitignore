@@ -3,3 +3,6 @@ __pycache__/
 .env
 .vscode/
 node_modules/
+# Historian runtime data
+
+pelton_historical_data.csv
