@@ -38,12 +38,19 @@ def api_data():
 
     data = read_data()
 
+    status = "RUNNING"
+
+    if data["flow"] < 30:
+
+        status = "LOW FLOW WARNING"
+
     return {
 
         "rpm": round(data["rpm"], 2),
         "flow": round(data["flow"], 2),
         "pressure": round(data["pressure"], 2),
-        "power": round(data["power"], 2)
+        "power": round(data["power"], 2),
+        "status": status
     }
 
 # ---------------------------------------------------
@@ -68,6 +75,7 @@ def dashboard():
     status = "RUNNING"
 
     status_color = "#22c55e"
+    alarm_banner = False
 
 
     if pressure > 8:
@@ -76,6 +84,8 @@ def dashboard():
 
         status_color = "#f59e0b"
 
+        alarm_banner = True
+
 
     if rpm > 1100:
 
@@ -83,13 +93,30 @@ def dashboard():
 
         status_color = "#ef4444"
 
+        alarm_banner = True
 
-    if flow < 10:
+
+    if flow < 30: #if flow < 10:
 
         status = "LOW FLOW WARNING"
 
         status_color = "#f59e0b"
 
+        alarm_banner = True
+
+    alarm_html = ""
+
+    if alarm_banner:
+
+        alarm_html = """
+
+        <div class="alarm-banner">
+
+            ⚠ INDUSTRIAL ALARM ACTIVE ⚠
+
+        </div>
+
+        """
     return f"""
 
     <html>
@@ -142,6 +169,32 @@ def dashboard():
             }}
 
             .process-image {{
+
+                width: 100%;
+
+                height: 100%;
+
+                object-fit: contain;
+            }}
+
+            .turbine-rotating {{
+
+                position: absolute;
+
+                top: 210px;
+
+                left: 720px;
+
+                width: 130px;
+
+                height: 130px;
+
+                border-radius: 50%;
+
+                animation: turbine-spin 0.5s linear infinite;
+
+                z-index: 10;
+            }}
 
                 width: 100%;
 
@@ -212,6 +265,49 @@ def dashboard():
                 animation: flow 1s linear infinite;
             }}
 
+            .alarm-banner {{
+
+                background-color: #ef4444;
+
+                color: white;
+
+                text-align: center;
+
+                padding: 15px;
+
+                font-size: 28px;
+
+                font-weight: bold;
+
+                animation: blink 1s infinite;
+            }}
+
+            @keyframes turbine-spin {{
+
+                from {{
+
+                    transform: rotate(0deg);
+                }}
+
+                to {{
+
+                    transform: rotate(360deg);
+                }}
+            }}
+            @keyframes blink {{
+
+                0% {{
+                    opacity: 1;
+                }}
+
+                50% {{
+                    opacity: 0.3;
+                }}
+
+                100% {{
+                    opacity: 1;
+                }}
+            }}
             @keyframes flow {{
 
                 0% {{
@@ -232,8 +328,9 @@ def dashboard():
     </head>
 
     <body>
+    {alarm_html}
 
-        <div class="header">
+    <div class="header">
 
             HydroTurbine-SCADA | Pelton Mimic Dashboard
 
@@ -249,6 +346,10 @@ def dashboard():
                 >
 
                 <div class="water-flow"></div>
+                <img
+                    src="/static/pelton_runner.png"
+                    class="turbine-rotating"
+                >
 
             </div>
 
@@ -296,7 +397,7 @@ def dashboard():
                         style="color:{status_color};"
                     >
 
-                        {status}
+                        <span id="status-value">{status}</span>
 
                     </div>
 
@@ -323,8 +424,8 @@ async function updateData() {{
     document.getElementById("pressure-value").innerHTML =
         data.pressure;
 
-    document.getElementById("power-value").innerHTML =
-        data.power;
+    document.getElementById("status-value").innerHTML =
+        data.status;
 }}
 
 setInterval(updateData, 2000);
