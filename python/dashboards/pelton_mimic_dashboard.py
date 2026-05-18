@@ -61,6 +61,35 @@ def dashboard():
     pressure = round(data["pressure"], 2)
     power = round(data["power"], 2)
 
+# ---------------------------------------------------
+# ALARM LOGIC
+# ---------------------------------------------------
+
+    status = "RUNNING"
+
+    status_color = "#22c55e"
+
+
+    if pressure > 8:
+
+        status = "HIGH PRESSURE WARNING"
+
+        status_color = "#f59e0b"
+
+
+    if rpm > 1100:
+
+        status = "OVER SPEED CRITICAL"
+
+        status_color = "#ef4444"
+
+
+    if flow < 10:
+
+        status = "LOW FLOW WARNING"
+
+        status_color = "#f59e0b"
+
     return f"""
 
     <html>
@@ -154,11 +183,9 @@ def dashboard():
 
             .status-running {{
 
-                color: #22c55e;
+            font-weight: bold;
 
-                font-weight: bold;
-
-                font-size: 24px;
+            font-size: 24px;
             }}
 
             .water-flow {{
@@ -263,9 +290,13 @@ def dashboard():
 
                     <h2>SYSTEM STATUS</h2>
 
-                    <div class="status-running">
+                    <div
+                        class="status-running"
 
-                        RUNNING
+                        style="color:{status_color};"
+                    >
+
+                        {status}
 
                     </div>
 
