@@ -1,3 +1,10 @@
+# Qué hará este dashboard:
+
+#  leerá historian CSV
+# mostrará últimas variables
+# refrescará automáticamente
+# actuará como mini SCADA consola
+
 """
 HydroTurbine-SCADA
 Live Console Dashboard

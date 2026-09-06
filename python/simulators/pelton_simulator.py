@@ -26,7 +26,7 @@ Pelton Turbine Industrial Simulator
 import time
 import random
 
-from python.plc_comm.plc_tags import PELTON_TAGS
+from plc_comm.plc_tags import PELTON_TAGS
 
 
 # ---------------------------------------------------
